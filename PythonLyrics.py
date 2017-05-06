@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QVBoxLayout, QScrollArea
+from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QVBoxLayout, QTextEdit
 from PyQt5.QtCore import QTimer
 import sys
 from Lyrics import Lyrics
@@ -8,38 +8,39 @@ from Lyrics import Lyrics
 class PythonLyrics(QWidget):
 
     def __init__(self):
-        super().__init__()
 
+        super(PythonLyrics, self).__init__()
         self.lyrics = Lyrics()
-        self.label = QLabel(self)
-
         self.init_ui()
 
     def init_ui(self):
 
-        self.setGeometry(300, 300, 500, 700)
+        self.text = QTextEdit(self)
+        # self.text.setFixedSize(480, 700)
+        self.text.setText(self.lyrics.get_lyrics())
+        self.text.setLineWrapMode(QTextEdit.NoWrap)
+        self.text.setReadOnly(True)
+
+        self.info = QLabel(self)
+        self.info.setText(self.lyrics.get_artist() + ' ' + self.lyrics.get_song())
+
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.info)
+        vbox.addWidget(self.text)
+
         self.setWindowTitle('PythonLyrics')
-        self.setFixedSize(500, 700)
+        self.setGeometry(700, 200, 605, 700)
 
-        self.label.setText(self.lyrics.get_lyrics())
-        self.label.setOpenExternalLinks(True)
+        self.setLayout(vbox)
 
-        scrollbar = QScrollArea()
-        scrollbar.setWidget(self.label)
-
-        hbox = QVBoxLayout()
-        hbox.addWidget(scrollbar)
-
-        self.setLayout(hbox)
         self.show()
-
-    def set_display_message(self, message):
-        self.label.setText(message)
 
     def refresh(self):
         if self.lyrics.update():
-            self.label.setText(self.lyrics.get_lyrics())
-            self.label.setOpenExternalLinks(True)
+            self.text.clear()
+            self.text.setText(self.lyrics.get_lyrics())
+            self.info.clear()
+            self.info.setText(self.lyrics.get_artist() + ' ' + self.lyrics.get_song())
 
 
 if __name__ == '__main__':
