@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QVBoxLayout, QTextEdit
+from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QVBoxLayout, QTextBrowser
 from PyQt5.QtCore import QTimer
 import sys
 from Lyrics import Lyrics
@@ -15,11 +15,11 @@ class PythonLyrics(QWidget):
 
     def init_ui(self):
 
-        self.text = QTextEdit(self)
-        # self.text.setFixedSize(480, 700)
+        self.text = QTextBrowser(self)
         self.text.setText(self.lyrics.get_lyrics())
-        self.text.setLineWrapMode(QTextEdit.NoWrap)
+        self.text.setLineWrapMode(QTextBrowser.NoWrap)
         self.text.setReadOnly(True)
+        self.text.setOpenExternalLinks(True)
 
         self.info = QLabel(self)
         self.info.setText(self.lyrics.get_artist() + ' ' + self.lyrics.get_song())

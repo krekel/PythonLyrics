@@ -8,8 +8,8 @@ class Lyrics:
 
     def __init__(self):
         try:
-            self.artist = self.current_artist_song()['xesam:artist'][0].replace(' ', '_').replace('-', '_')
-            self.song = self.current_artist_song()['xesam:title'].replace(' ', '_').replace('-', '_')
+            self.artist = self.current_artist_song()['xesam:artist'][0]
+            self.song = self.current_artist_song()['xesam:title']
         except TypeError:
             print('Start Spotify')
 
@@ -35,16 +35,15 @@ class Lyrics:
     def get_lyrics(self):
 
         try:
-
             r = requests.get('http://lyrics.wikia.com/wiki/' + self.artist + ':' + self.song).content
             soup = BeautifulSoup(r, 'lxml')
             s_tags = soup.find_all(class_="lyricbox")
 
             if len(s_tags) == 0:
-                lyrics = 'Lyrics Not Found'
+                lyrics = '<a href="https://www.google.com/#q=' + self.artist.replace(' ', '+')\
+                         + '+' + self.song.replace(' ', '+') + '+lyrics">Search Lyrics online</a>'
 
-            lyrics = str(s_tags[0]).replace('<div class="lyricbox">', '') \
-                .replace('<div class="lyricsbreak">', '').replace('</div>', '').replace('<br/>', '\n')
+            lyrics = str(s_tags[0]).replace('<[^>br]*>', '').replace('<br>', '\n')
 
         except requests.ConnectionError:
             print('Network problem')
@@ -53,13 +52,13 @@ class Lyrics:
         except IndexError:
             print('lyrics not found ' + self.artist + ' ' + self.song)
         except requests.RequestException:
-            print('Test')
+            print('Request')
 
         return lyrics
 
     def update(self):
-        if self.song != self.current_artist_song()['xesam:title'].replace(' ', '_'):
-            self.song = self.current_artist_song()['xesam:title'].replace(' ', '_').replace('-', '_')
-            self.artist = self.current_artist_song()['xesam:artist'][0].replace(' ', '_').replace('-', '_')
+        if self.song != self.current_artist_song()['xesam:title']:
+            self.song = self.current_artist_song()['xesam:title']
+            self.artist = self.current_artist_song()['xesam:artist'][0]
             return True
         return False
